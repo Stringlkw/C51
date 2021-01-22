@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   DS18B20                                                               01/22/2021 20:13:34 PAGE 1   
+C51 COMPILER V9.54   DS18B20                                                               01/22/2021 20:29:47 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE DS18B20
@@ -62,7 +62,7 @@ line level    source
   53   1              while(DS_data == 1);
   54   1              while(DS_data == 0)
   55   1              {
-C51 COMPILER V9.54   DS18B20                                                               01/22/2021 20:13:34 PAGE 2   
+C51 COMPILER V9.54   DS18B20                                                               01/22/2021 20:29:47 PAGE 2   
 
   56   2                      flag = 1;       
   57   2              }
@@ -126,7 +126,7 @@ line level    source
  115   2                      {
  116   3                              DS_Write(0xcc);
  117   3                              DS_Write(0xBE);
-C51 COMPILER V9.54   DS18B20                                                               01/22/2021 20:13:34 PAGE 3   
+C51 COMPILER V9.54   DS18B20                                                               01/22/2021 20:29:47 PAGE 3   
 
  118   3                              LSB = DS_Read();
  119   3                              MSB = DS_Read();

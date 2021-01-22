@@ -6,7 +6,7 @@
 
 // //IO设置
 // sbit k1 = P2^0;
-
+// sbit HX711_DOUT=P1^2; 
 // sbit HX711_SCK=P1^3; 
 
 // //函数或者变量声明

@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   SR04                                                                  01/22/2021 20:13:35 PAGE 1   
+C51 COMPILER V9.54   SR04                                                                  01/22/2021 20:29:48 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE SR04
@@ -62,7 +62,7 @@ line level    source
   53   2                      lcd12864WriteChar(s % 1000 % 100 / 10 + '0');
   54   2                      lcd12864WriteChar(s % 1000 % 10 % 10 + '0');
   55   2              }
-C51 COMPILER V9.54   SR04                                                                  01/22/2021 20:13:35 PAGE 2   
+C51 COMPILER V9.54   SR04                                                                  01/22/2021 20:29:48 PAGE 2   
 
   56   1      }
 
