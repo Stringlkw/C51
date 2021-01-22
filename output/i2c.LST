@@ -1,0 +1,211 @@
+C51 COMPILER V9.54   I2C                                                                   01/22/2021 20:13:35 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE I2C
+OBJECT MODULE PLACED IN i2c.OBJ
+COMPILER INVOKED BY: D:\Program Files (x86)\keil5\C51\BIN\C51.exe i2c.c
+
+line level    source
+
+   1          #include "i2c.h"
+   2          bit ack; //应答标志位
+   3          //开始
+   4          void i2cStart()
+   5          {
+   6   1              SDA = 1;
+   7   1              delay_us(1);
+   8   1              SCL = 1;
+   9   1              delay_us(5);
+  10   1              SDA = 0;
+  11   1              delay_us(5);
+  12   1              SCL = 0;
+  13   1              delay_us(2);
+  14   1      }
+  15          
+  16          //停止
+  17          void i2cStop()
+  18          {
+  19   1              SDA = 0;
+  20   1              delay_us(1);
+  21   1              SCL = 1;
+  22   1              delay_us(5);
+  23   1              SDA = 1;
+  24   1              delay_us(5);
+  25   1      }
+  26          
+  27          bit Check_Ack()
+  28          {
+  29   1              uchar errtime = 250;
+  30   1              delay_us(1);
+  31   1              SCL = 1;
+  32   1              delay_us(1);
+  33   1              CY = SDA;
+  34   1              while (CY)
+  35   1              {
+  36   2                      errtime--;
+  37   2                      CY = SDA;
+  38   2                      if (!errtime)
+  39   2                      {
+  40   3                              i2cStop();
+  41   3                              return 1;
+  42   3                      }
+  43   2              }
+  44   1              delay_us(1);
+  45   1              SCL = 0;
+  46   1              return 0;
+  47   1      }
+  48          //应答
+  49          void i2cAck()
+  50          {
+  51   1              SDA = 0;
+  52   1              delay_us(3);
+  53   1              SCL = 1;
+  54   1              delay_us(5);
+  55   1              SCL = 0;
+C51 COMPILER V9.54   I2C                                                                   01/22/2021 20:13:35 PAGE 2   
+
+  56   1              delay_us(2);
+  57   1      }
+  58          
+  59          //非应答
+  60          void noI2cAck()
+  61          {
+  62   1              SDA = 1;
+  63   1              delay_us(3);
+  64   1              SCL = 1;
+  65   1              delay_us(5);
+  66   1              SCL = 0;
+  67   1              delay_us(2);
+  68   1      }
+  69          
+  70          //写入一个字节到i2c
+  71          void i2cWriteByte(uchar dat)
+  72          {
+  73   1              uchar i;
+  74   1              for (i = 0; i < 8; i++)
+  75   1              {
+  76   2                      if ((dat << i) & 0x80)
+  77   2                      {
+  78   3                              SDA = 1;
+  79   3                      }
+  80   2                      else
+  81   2                      {
+  82   3                              SDA = 0;
+  83   3                      }
+  84   2                      delay_us(1);
+  85   2                      SCL = 1;
+  86   2                      delay_us(5);
+  87   2                      SCL = 0;
+  88   2              }
+  89   1              delay_us(2);
+  90   1              SDA = 1;
+  91   1              delay_us(2);
+  92   1              SCL = 1;
+  93   1              delay_us(3);
+  94   1              if (SDA == 1)
+  95   1              {
+  96   2                      ack = 0;
+  97   2              }
+  98   1              else
+  99   1              {
+ 100   2                      ack = 1;
+ 101   2              }
+ 102   1              SCL = 0;
+ 103   1              delay_us(2);
+ 104   1      }
+ 105          
+ 106          //接收一个字节的数据
+ 107          uchar i2cReadByte()
+ 108          {
+ 109   1              uchar retc;
+ 110   1              uchar i;
+ 111   1              retc = 0;
+ 112   1              SDA = 1;
+ 113   1              for (i = 0; i < 8; i++)
+ 114   1              {
+ 115   2                      delay_us(1);
+ 116   2                      SCL = 0;
+ 117   2                      delay_us(5);
+C51 COMPILER V9.54   I2C                                                                   01/22/2021 20:13:35 PAGE 3   
+
+ 118   2                      SCL = 1;
+ 119   2                      delay_us(2);
+ 120   2                      retc = retc << 1;
+ 121   2                      if (SDA == 1)
+ 122   2                      {
+ 123   3                              retc = retc + 1;
+ 124   3                      }
+ 125   2                      delay_us(2);
+ 126   2              }
+ 127   1              SCL = 0;
+ 128   1              delay_us(2);
+ 129   1              return retc;
+ 130   1      }
+ 131          
+ 132          uchar readADC(uchar channel)
+ 133          {
+ 134   1              uchar val;
+ 135   1              i2cStart();
+ 136   1              i2cWriteByte(ADDWR);
+ 137   1              if (ack == 0)
+ 138   1              {
+ 139   2                      return 0;
+ 140   2              }
+ 141   1              i2cWriteByte(0x40 | channel);
+ 142   1              if (ack == 0)
+ 143   1              {
+ 144   2                      return 0;
+ 145   2              }
+ 146   1              i2cStart();
+ 147   1              i2cWriteByte(ADDWR + 1);
+ 148   1              if (ack == 0)
+ 149   1              {
+ 150   2                      return 0;
+ 151   2              }
+ 152   1              val = i2cReadByte();
+ 153   1              noI2cAck();
+ 154   1              i2cStop();
+ 155   1              return val;
+ 156   1      }
+ 157          
+ 158          void writeAt24c02(uchar address, uchar dat)
+ 159          {
+ 160   1              i2cStart();
+ 161   1              i2cWriteByte(0xa0);
+ 162   1      
+ 163   1              i2cWriteByte(address);
+ 164   1      
+ 165   1              i2cWriteByte(dat);
+ 166   1      
+ 167   1              i2cStop();
+ 168   1      }
+ 169          
+ 170          uchar readAt24c02(uchar address)
+ 171          {
+ 172   1              uchar dat;
+ 173   1              i2cStart();
+ 174   1              i2cWriteByte(0xa0);
+ 175   1              i2cWriteByte(address);
+ 176   1              i2cStart();
+ 177   1              i2cWriteByte(0xa1);
+ 178   1              dat = i2cReadByte();
+ 179   1              noI2cAck();
+C51 COMPILER V9.54   I2C                                                                   01/22/2021 20:13:35 PAGE 4   
+
+ 180   1              i2cStop();
+ 181   1              return dat;
+ 182   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    399    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      11
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

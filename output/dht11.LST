@@ -1,0 +1,125 @@
+C51 COMPILER V9.54   DHT11                                                                 01/22/2021 20:13:34 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE DHT11
+OBJECT MODULE PLACED IN dht11.OBJ
+COMPILER INVOKED BY: D:\Program Files (x86)\keil5\C51\BIN\C51.exe dht11.c
+
+line level    source
+
+   1          // #include "dht11.h"
+   2          // #include "lcd12864.h"
+   3          
+   4          // sbit DHT11_DQ = P1 ^ 0; //dht11data端接单片机的P1^0口//
+   5          // unsigned char mun_char_table[]={"0123456789"};
+   6          // uchar hum_float, hum_int, tmp_float, tmp_int;
+   7          // uint m, n;
+   8          // //很重要的延时
+   9          // void delayus(uchar n)
+  10          // {
+  11          //     while (n--)
+  12          //         ;
+  13          // }
+  14          // //很正要的延时
+  15          // void Delay10ms(void) //12M晶振下延时
+  16          // {
+  17          //     uchar a, b;
+  18          //     for (b = 249; b > 0; b--)
+  19          //         for (a = 17; a > 0; a--)
+  20          //             ;
+  21          // }
+  22          
+  23          // //起始
+  24          // void dhtReset(void)
+  25          // {
+  26          //     DHT11_DQ = 1;
+  27          //     delay_ms(10);
+  28          //     DHT11_DQ = 0;
+  29          //     Delay10ms(); //主机把总线拉低必须大于
+  30          //     //18msDHT11能检测到起始信号
+  31          //     Delay10ms();
+  32          //     Delay10ms();
+  33          //     DHT11_DQ = 1;
+  34          //     delay_ms(1);
+  35          // }
+  36          // uint integer(uchar x)
+  37          // {
+  38          //     uchar h, l;
+  39          //     uint n;
+  40          //     l = x & 0x0f;
+  41          //     h = (x & 0xf0) >> 4;
+  42          //     n = h * 16 + l;
+  43          //     return n;
+  44          // }
+  45          
+  46          // uchar dhtReadByte()
+  47          // {
+  48          //     uchar i, dht;
+  49          //     for (i = 8; i > 0; i--)
+  50          //     {
+  51          //         dht = dht << 1;
+  52          //         while (!DHT11_DQ)
+  53          //             ;        //等待50ms
+  54          //         delayus(30); //延时29us
+  55          //         if (DHT11_DQ == 1)
+C51 COMPILER V9.54   DHT11                                                                 01/22/2021 20:13:34 PAGE 2   
+
+  56          //         {
+  57          //             dht = dht | 0x01;
+  58          //             delayus(60);
+  59          //         }
+  60          //         else
+  61          //             delayus(30); //延时29us
+  62          //     }
+  63          //     return dht;
+  64          // }
+  65          // void dhtReadHumTmp()
+  66          // {
+  67          //     dhtReset();
+  68          //     DHT11_DQ = 0; //数据线拉低>18ms
+  69          //     delay_ms(20); //延时>18ms
+  70          //     DHT11_DQ = 1; //拉高等待
+  71          //     delayus(30);  //延时29us
+  72          //     DHT11_DQ = 1;
+  73          //     if (!DHT11_DQ)
+  74          //     {
+  75          //         while (!DHT11_DQ)
+  76          //             ;
+  77          //         while (DHT11_DQ)
+  78          //             ;
+  79          //         hum_int = dhtReadByte(); //湿度整数数据
+  80          //         hum_float = dhtReadByte(); //湿度小数数据
+  81          //         tmp_int = dhtReadByte();   //温度整数数据
+  82          //         tmp_float = dhtReadByte(); //温度小数数据
+  83          //     }
+  84          // }
+  85          
+  86          // void displayTempAndRH()
+  87          // {
+  88          //     dhtReadHumTmp();
+  89          //     m = integer(hum_int);
+  90          //     delay_ms(1);
+  91          //     n = integer(tmp_int);
+  92          //     lcd12864SetPos(3, 0);
+  93          //     lcd12864WriteChar(mun_char_table[n / 10]);
+  94          //     lcd12864WriteChar(mun_char_table[n % 10]);
+  95          
+  96          
+  97          //     lcd12864SetPos(3, 3);
+  98          //     lcd12864WriteChar(mun_char_table[m / 10]);
+  99          //     lcd12864WriteChar(mun_char_table[m % 10]);
+ 100          // }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   ----    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

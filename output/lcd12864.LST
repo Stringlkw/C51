@@ -1,0 +1,227 @@
+C51 COMPILER V9.54   LCD12864                                                              01/22/2021 20:13:35 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE LCD12864
+OBJECT MODULE PLACED IN lcd12864.OBJ
+COMPILER INVOKED BY: D:\Program Files (x86)\keil5\C51\BIN\C51.exe lcd12864.c
+
+line level    source
+
+   1          #include "lcd12864.h"
+   2          uchar code NUM[] = {"0123456789 :.-"};
+   3          
+   4          bit lcdBusy()
+   5          {
+   6   1      
+   7   1          bit result;
+   8   1          P0 = 0X00;
+   9   1          RS = 0;
+  10   1          RW = 1;
+  11   1          LCDEN = 1;
+  12   1          delay_ms(1);
+  13   1          result = (bit)(P0 & 0x80);
+  14   1          LCDEN = 0;
+  15   1          return (result);
+  16   1      }
+  17          
+  18          void lcd12864Write(uchar byte, uchar sign)
+  19          {
+  20   1          while (lcdBusy())
+  21   1              ;
+  22   1      
+  23   1          RS = sign;
+  24   1          RW = 0;
+  25   1          LCDEN = 0;
+  26   1          _nop_();
+  27   1          _nop_();
+  28   1          GPIO_LCD12864 = byte;
+  29   1          delay_ms(1);
+  30   1          LCDEN = 1;
+  31   1          delay_ms(1);
+  32   1          LCDEN = 0;
+  33   1          delay_ms(1);
+  34   1      }
+  35          
+  36          void lcd12864Init()
+  37          {
+  38   1          lcd12864Write(0x30, LCD_WRITE_COM);
+  39   1          lcd12864Write(0x02, LCD_WRITE_COM);
+  40   1      
+  41   1          lcd12864Write(0x06, LCD_WRITE_COM);
+  42   1      
+  43   1          lcd12864Write(0x0c, LCD_WRITE_COM);
+  44   1      
+  45   1          lcd12864Write(0x01, LCD_WRITE_COM);
+  46   1      
+  47   1          lcd12864Write(0x80, LCD_WRITE_COM);
+  48   1      }
+  49          
+  50          void lcd12864DisplayString(uchar row, uchar column, uchar *str)
+  51          {
+  52   1          uchar point;
+  53   1          if (row == 0)
+  54   1          {
+  55   2              point = 0x80 + column;
+C51 COMPILER V9.54   LCD12864                                                              01/22/2021 20:13:35 PAGE 2   
+
+  56   2          }
+  57   1          else if (row == 1)
+  58   1          {
+  59   2              point = 0x90 + column;
+  60   2          }
+  61   1          else if (row == 2)
+  62   1          {
+  63   2              point = 0x88 + column;
+  64   2          }
+  65   1          else if (row == 3)
+  66   1          {
+  67   2              point = 0x98 + column;
+  68   2          }
+  69   1          else
+  70   1          {
+  71   2              return;
+  72   2          }
+  73   1          lcd12864Write(point, LCD_WRITE_COM);
+  74   1          delay_ms(1);
+  75   1          while (*str != '\0')
+  76   1          {
+  77   2              lcd12864Write(*str, LCD_WRITE_DATA);
+  78   2              delay_ms(2);
+  79   2              str++;
+  80   2          }
+  81   1      }
+  82          
+  83          void lcd12864DisplayChar(uchar row, uchar column, uchar ch)
+  84          {
+  85   1          uchar point;
+  86   1          if (row == 0)
+  87   1          {
+  88   2              point = 0x80 + column;
+  89   2          }
+  90   1          else if (row == 1)
+  91   1          {
+  92   2              point = 0x90 + column;
+  93   2          }
+  94   1          else if (row == 2)
+  95   1          {
+  96   2              point = 0x88 + column;
+  97   2          }
+  98   1          else if (row == 3)
+  99   1          {
+ 100   2              point = 0x98 + column;
+ 101   2          }
+ 102   1          lcd12864Write(point, LCD_WRITE_COM);
+ 103   1          delay_ms(1);
+ 104   1          lcd12864Write(ch, LCD_WRITE_DATA);
+ 105   1      }
+ 106          
+ 107          void lcd12864WriteChar(uchar ch)
+ 108          {
+ 109   1          lcd12864Write(ch, LCD_WRITE_DATA);
+ 110   1      }
+ 111          void lcd12864Clear()
+ 112          {
+ 113   1          lcd12864Write(0x01, LCD_WRITE_COM);
+ 114   1          delay_ms(5);
+ 115   1      }
+ 116          
+ 117          void lcd12864ShowStr(uchar row, uchar column, uchar *str, uchar len)
+C51 COMPILER V9.54   LCD12864                                                              01/22/2021 20:13:35 PAGE 3   
+
+ 118          {
+ 119   1          uchar point;
+ 120   1          if (row == 0)
+ 121   1          {
+ 122   2              point = 0x80 + column;
+ 123   2          }
+ 124   1          else if (row == 1)
+ 125   1          {
+ 126   2              point = 0x90 + column;
+ 127   2          }
+ 128   1          else if (row == 2)
+ 129   1          {
+ 130   2              point = 0x88 + column;
+ 131   2          }
+ 132   1          else if (row == 3)
+ 133   1          {
+ 134   2              point = 0x98 + column;
+ 135   2          }
+ 136   1          else
+ 137   1          {
+ 138   2              return;
+ 139   2          }
+ 140   1          lcd12864Write(point, LCD_WRITE_COM);
+ 141   1          delay_ms(1);
+ 142   1          while (len--)
+ 143   1          {
+ 144   2              lcd12864Write(*str++, LCD_WRITE_DATA);
+ 145   2              delay_ms(1);
+ 146   2          }
+ 147   1      }
+ 148          
+ 149          void lcd12864DisplayNum(uchar row, uchar column, uchar num)
+ 150          {
+ 151   1          lcd12864DisplayChar(row, column, NUM[num]);
+ 152   1      }
+ 153          
+ 154          void lcd12864WriteNum(uchar num)
+ 155          {
+ 156   1          lcd12864Write(NUM[num], LCD_WRITE_DATA);
+ 157   1      }
+ 158          
+ 159          void lcd12864SetPos(uchar row, uchar column)
+ 160          {
+ 161   1          uchar point;
+ 162   1          if (row == 0)
+ 163   1          {
+ 164   2              point = 0x80 + column;
+ 165   2          }
+ 166   1          else if (row == 1)
+ 167   1          {
+ 168   2              point = 0x90 + column;
+ 169   2          }
+ 170   1          else if (row == 2)
+ 171   1          {
+ 172   2              point = 0x88 + column;
+ 173   2          }
+ 174   1          else if (row == 3)
+ 175   1          {
+ 176   2              point = 0x98 + column;
+ 177   2          }
+ 178   1          lcd12864Write(point, LCD_WRITE_COM);
+ 179   1      }
+C51 COMPILER V9.54   LCD12864                                                              01/22/2021 20:13:35 PAGE 4   
+
+ 180          
+ 181          //****************************************
+ 182          //整数转字符串
+ 183          //****************************************
+ 184          void intToString(uchar *str, int temp_data)
+ 185          {
+ 186   1          if (temp_data < 0)
+ 187   1          {
+ 188   2              temp_data = -temp_data;
+ 189   2              *str = '-';
+ 190   2          }
+ 191   1          else
+ 192   1              *str = ' ';
+ 193   1          *++str = temp_data / 100 + 0x30;
+ 194   1          temp_data = temp_data % 100; //取余运算
+ 195   1          *++str = temp_data / 10 + 0x30;
+ 196   1          temp_data = temp_data % 10; //取余运算
+ 197   1          *++str = temp_data + 0x30;
+ 198   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    612    ----
+   CONSTANT SIZE    =     15    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      21
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       1
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

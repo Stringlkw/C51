@@ -1,0 +1,69 @@
+C51 COMPILER V9.54   GENERAL                                                               01/22/2021 20:13:35 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE GENERAL
+OBJECT MODULE PLACED IN general.OBJ
+COMPILER INVOKED BY: D:\Program Files (x86)\keil5\C51\BIN\C51.exe general.c
+
+line level    source
+
+   1          #include "general.h"
+   2          
+   3          void delay_us(uchar us)
+   4          {
+   5   1              uchar i;
+   6   1              for (i = 1; i > 0; i--)
+   7   1                      for (us; us > 0; us--)
+   8   1                              ;
+   9   1      }
+  10          
+  11          void delay_ms(uint ms)
+  12          {
+  13   1              uint i, j;
+  14   1              for (j = 0; j < ms; j++)
+  15   1                      for (i = 0; i < 920; i++)
+  16   1                              ;
+  17   1      }
+  18          
+  19          
+  20          void delay_100us(uint n)
+  21          {
+  22   1          uchar i=112;
+  23   1      
+  24   1              while(n--)
+  25   1              {
+  26   2                      while(i--);
+  27   2              }
+  28   1      }
+  29          
+  30          void delay1s(void)   //误差 -0.000000000099us
+  31          {
+  32   1          unsigned char a,b,c;
+  33   1          for(c=217;c>0;c--)
+  34   1              for(b=171;b>0;b--)
+  35   1                  for(a=73;a>0;a--);
+  36   1      }
+  37          
+  38          void delay1ms(void)   //误差 -0.018084490741us
+  39          {
+  40   1          unsigned char a,b;
+  41   1          for(b=21;b>0;b--)
+  42   1              for(a=130;a>0;a--);
+  43   1          _nop_();  //if Keil,require use intrins.h
+  44   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     90    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+C51 COMPILER V9.54   GENERAL                                                               01/22/2021 20:13:35 PAGE 2   
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

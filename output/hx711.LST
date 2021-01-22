@@ -1,0 +1,145 @@
+C51 COMPILER V9.54   HX711                                                                 01/22/2021 20:13:35 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE HX711
+OBJECT MODULE PLACED IN hx711.OBJ
+COMPILER INVOKED BY: D:\Program Files (x86)\keil5\C51\BIN\C51.exe hx711.c
+
+line level    source
+
+   1          // #include "hx711.h"
+   2          // #include "lcd12864.h"
+   3          // long Weight_Shiwu = 0;
+   4          // bit Flag_ERROR = 0;
+   5          // ulong Weight_Maopi = 0;
+   6          // uint qupi = 0;
+   7          
+   8          // //校准参数
+   9          // //因为不同的传感器特性曲线不是很一致，因此，每一个传感器需要矫正这里�
+             -�个参数才能使测量值很准确。
+  10          // //当发现测试出来的重量偏大时，增加该数值。
+  11          // //如果测试出来的重量偏小时，减小改数值。
+  12          // //该值可以为小数
+  13          // #define GapValue 400
+  14          // //****************************************************
+  15          // //延时函数
+  16          // //****************************************************
+  17          // void Delay_hx711_us(void)
+  18          // {
+  19          //     _nop_();
+  20          //     _nop_();
+  21          // }
+  22          
+  23          // //****************************************************
+  24          // //读取HX711
+  25          // //****************************************************
+  26          // ulong hx711Read(void) //增益128
+  27          // {
+  28          //     ulong count;
+  29          //     uchar i;
+  30          //     HX711_DOUT = 1;
+  31          //     Delay_hx711_us();
+  32          //     HX711_SCK = 0;
+  33          //     count = 0;
+  34          //     EA = 1;
+  35          //     while (HX711_DOUT)
+  36          //         ;
+  37          //     EA = 0;
+  38          //     for (i = 0; i < 24; i++)
+  39          //     {
+  40          //         HX711_SCK = 1;
+  41          //         count = count << 1;
+  42          //         HX711_SCK = 0;
+  43          //         if (HX711_DOUT)
+  44          //             count++;
+  45          //     }
+  46          //     HX711_SCK = 1;
+  47          //     count = count ^ 0x800000; //第25个脉冲下降沿来时，转换数据
+  48          //     Delay_hx711_us();
+  49          //     HX711_SCK = 0;
+  50          //     return (count);
+  51          // }
+  52          
+  53          // //****************************************************
+  54          // //称重
+C51 COMPILER V9.54   HX711                                                                 01/22/2021 20:13:35 PAGE 2   
+
+  55          // //****************************************************
+  56          // void getWeight()
+  57          // {
+  58          //     Weight_Shiwu = hx711Read();
+  59          //     Weight_Shiwu = Weight_Shiwu - Weight_Maopi; //获取净重
+  60          //     if (Weight_Shiwu > 0)
+  61          //     {
+  62          //         Weight_Shiwu = (unsigned int)((float)Weight_Shiwu / GapValue) - qupi; //计算实物的实际�
+             -�量
+  63          //         if (Weight_Shiwu > 5000)                                              //超重报警
+  64          //         {
+  65          //             Flag_ERROR = 1;
+  66          //         }
+  67          //         else
+  68          //         {
+  69          //             Flag_ERROR = 0;
+  70          //         }
+  71          //     }
+  72          //     else
+  73          //     {
+  74          //         Weight_Shiwu = 0;
+  75          //     }
+  76          // }
+  77          
+  78          // void getMaopi()
+  79          // {
+  80          //     Weight_Maopi = hx711Read();
+  81          // }
+  82          
+  83          // void hx711Display()
+  84          // {
+  85          //     if (Flag_ERROR == 1)
+  86          //     {
+  87          //         lcd12864DisplayString(1, 0, "ERROR");
+  88          //     }
+  89          //     else
+  90          //     {
+  91          //         lcd12864SetPos(1, 4);
+  92          //         lcd12864WriteNum(Weight_Shiwu / 1000);
+  93          //         lcd12864WriteNum(Weight_Shiwu % 1000 / 100);
+  94          //         lcd12864WriteNum(Weight_Shiwu % 100 / 10);
+  95          //         lcd12864WriteNum(Weight_Shiwu % 10);
+  96          //         lcd12864WriteChar('g');
+  97          //     }
+  98          // }
+  99          
+ 100          // void key1Scan()
+ 101          // {
+ 102          //     if (k1 == 0)
+ 103          //     {
+ 104          //         delay_ms(10);
+ 105          //         if (qupi == 0)
+ 106          //         {
+ 107          //             qupi = Weight_Shiwu;
+ 108          //         }
+ 109          //         else
+ 110          //         {
+ 111          //             qupi = 0;
+ 112          //         }
+ 113          //         while (!k1)
+ 114          //             ;
+ 115          //     }
+C51 COMPILER V9.54   HX711                                                                 01/22/2021 20:13:35 PAGE 3   
+
+ 116          // }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   ----    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

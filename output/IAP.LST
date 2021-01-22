@@ -1,0 +1,104 @@
+C51 COMPILER V9.54   IAP                                                                   01/22/2021 20:13:35 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE IAP
+OBJECT MODULE PLACED IN IAP.OBJ
+COMPILER INVOKED BY: D:\Program Files (x86)\keil5\C51\BIN\C51.exe IAP.c
+
+line level    source
+
+   1          #include "IAP.h"
+   2          /*使用示例
+   3              当需要把数据写进E2PROM时，需要先擦除，使用程序IAP_erase(IAP_ADDRESS);进行擦除
+   4          然后写进去用程序IAP_write(IAP_ADDRESS, lc);。
+   5              当重启后需要读E2PROM数据时，使用程序lc = IAP_read(IAP_ADDRESS);
+   6          */
+   7          /*----------------------------
+   8          Disable ISP/IAP/EEPROM function
+   9          Make MCU in a safe state
+  10          ----------------------------*/
+  11          void iapIdle()
+  12          {
+  13   1              IAP_CONTR = 0;
+  14   1              IAP_CMD = 0;
+  15   1              IAP_TRIG = 0;
+  16   1              IAP_ADDRH = 0x80;       //高位数据地址
+  17   1              IAP_ADDRL = 0;
+  18   1      }
+  19          
+  20          /*----------------------------
+  21          Read one uchar from ISP/IAP/EEPROM area 
+  22          Input: addr (ISP/IAP/EEPROM address) 
+  23          Output:Flash data
+  24          ----------------------------*/
+  25          uchar iapRead(uint addr)
+  26          {
+  27   1              uchar dat;
+  28   1              
+  29   1              IAP_CONTR = ENABLE_IAP;
+  30   1              IAP_CMD = CMD_READ;
+  31   1              IAP_ADDRL = addr;
+  32   1              IAP_ADDRH = addr >> 8;
+  33   1              IAP_TRIG = 0x5a;
+  34   1              IAP_TRIG = 0xa5;
+  35   1              _nop_();
+  36   1              
+  37   1              dat = IAP_DATA;
+  38   1              iapIdle();
+  39   1              
+  40   1              return dat;
+  41   1      }
+  42          
+  43          /*----------------------------
+  44          Program one uchar to ISP/IAP/EEPROM area 
+  45          Input: addr (ISP/IAP/EEPROM address)
+  46                          dat (ISP/IAP/EEPROM data) 
+  47          Output:-
+  48          ----------------------------*/
+  49          void iapWrite(uint addr, uchar dat)
+  50          {
+  51   1              IAP_CONTR = ENABLE_IAP;
+  52   1              IAP_CMD = CMD_PROGRAM;
+  53   1              IAP_ADDRL = addr;
+  54   1              IAP_ADDRH = addr >> 8;
+  55   1              IAP_DATA = dat;
+C51 COMPILER V9.54   IAP                                                                   01/22/2021 20:13:35 PAGE 2   
+
+  56   1              IAP_TRIG = 0x5a;
+  57   1              IAP_TRIG = 0xa5;
+  58   1              _nop_();
+  59   1      
+  60   1              iapIdle();
+  61   1      }
+  62          
+  63          /*----------------------------
+  64          Erase one sector area
+  65          Input: addr (ISP/IAP/EEPROM address) 
+  66          Output:-
+  67          ----------------------------*/
+  68          void iapErase(uint addr)
+  69          {
+  70   1              IAP_CONTR = ENABLE_IAP;
+  71   1              IAP_CMD = CMD_ERASE;
+  72   1              IAP_ADDRL = addr;
+  73   1              IAP_ADDRH = addr >> 8;
+  74   1              IAP_TRIG = 0x5a;
+  75   1              IAP_TRIG = 0xa5;
+  76   1              _nop_();
+  77   1              
+  78   1              iapIdle();
+  79   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     78    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

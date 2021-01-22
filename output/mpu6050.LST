@@ -1,0 +1,96 @@
+C51 COMPILER V9.54   MPU6050                                                               01/22/2021 20:13:35 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MPU6050
+OBJECT MODULE PLACED IN mpu6050.OBJ
+COMPILER INVOKED BY: D:\Program Files (x86)\keil5\C51\BIN\C51.exe mpu6050.c
+
+line level    source
+
+   1          #include "mpu6050.h"
+   2          #include "i2c.h"
+   3          #include "lcd12864.h"
+   4          
+   5          uchar dis_buf[4];  //显示数字(-511至512)的字符数组
+   6          uint dis_data; //变量
+   7          
+   8          //**************************************
+   9          //向I2C设备写入一个字节数据
+  10          //**************************************
+  11          void writeMpu6050(uchar REG_Address, uchar REG_data)
+  12          {
+  13   1              i2cStart();                                     //起始信号
+  14   1              i2cWriteByte(SlaveAddress); //发送设备地址+写信号
+  15   1              i2cWriteByte(REG_Address);      //内部寄存器地址，
+  16   1              i2cWriteByte(REG_data);         //内部寄存器数据，
+  17   1              i2cStop();                                      //发送停止信号
+  18   1      }
+  19          //**************************************
+  20          //从I2C设备读取一个字节数据
+  21          //**************************************
+  22          uchar readMpu6020(uchar REG_Address)
+  23          {
+  24   1              uchar REG_data;
+  25   1              i2cStart();                                             //起始信号
+  26   1              i2cWriteByte(SlaveAddress);             //发送设备地址+写信号
+  27   1              i2cWriteByte(REG_Address);              //发送存储单元地址，从0开始
+  28   1              i2cStart();                                             //起始信号
+  29   1              i2cWriteByte(SlaveAddress + 1); //发送设备地址+读信号
+  30   1              REG_data = i2cReadByte();               //读出寄存器数据
+  31   1              noI2cAck();                                     //接收应答信号
+  32   1              i2cStop();                                              //停止信号
+  33   1              return REG_data;
+  34   1      }
+  35          //**************************************
+  36          //初始化MPU6050
+  37          //**************************************
+  38          void mpu6050Init()
+  39          {
+  40   1              writeMpu6050(PWR_MGMT_1, 0x00); //解除休眠状态
+  41   1              writeMpu6050(SMPLRT_DIV, 0x07);
+  42   1              writeMpu6050(CONFIG, 0x06);
+  43   1              writeMpu6050(GYRO_CONFIG, 0x18);
+  44   1              writeMpu6050(ACCEL_CONFIG, 0x01);
+  45   1      }
+  46          //**************************************
+  47          //合成数据
+  48          //**************************************
+  49          int getData(uchar REG_Address)
+  50          {
+  51   1              char H, L;
+  52   1              H = readMpu6020(REG_Address);
+  53   1              L = readMpu6020(REG_Address + 1);
+  54   1              return (H << 8) + L; //合成数据
+  55   1      }
+C51 COMPILER V9.54   MPU6050                                                               01/22/2021 20:13:35 PAGE 2   
+
+  56          
+  57          //**************************************
+  58          //在12864上显示10位数据
+  59          //**************************************
+  60          void Display10BitData(uchar row, uchar column,int value)
+  61          {
+  62   1              
+  63   1              value /= 64; //转换为10位数据
+  64   1              intToString(dis_buf, value);
+  65   1              lcd12864SetPos(row, column);
+  66   1              lcd12864WriteChar(dis_buf[0]);
+  67   1              lcd12864WriteChar(dis_buf[1]);
+  68   1              lcd12864WriteChar(dis_buf[2]);
+  69   1              lcd12864WriteChar(dis_buf[3]);
+  70   1              lcd12864WriteChar(' ');
+  71   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    193    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      6       8
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
